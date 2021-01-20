@@ -7,24 +7,35 @@
           <MovieItem
               :movie="movie"
               @mouseover.native="onMouseOver(movie.Poster)"
-              @removeItem="onRemoveItem"/>
+              @removeItem="onRemoveItem"
+              @showModal="onShowMovieInfo"
+          />
         </BCol>
       </template>
       <template v-else>
         <div>список пуст :(</div>
       </template>
     </BRow>
+    <BModal body-class="movie-modal-body" :id="movieInfoModalID" size="xl" hide-footer hide-header>
+      <MovieInfoModalContent :movie="selectedMovie" @closeModal="onCloseModal"/>
+    </BModal>
   </BContainer>
 </template>
 
 <script>
 import {mapActions, mapGetters} from 'vuex'
 import MovieItem from "@/components/MovieItem";
+import MovieInfoModalContent from "@/components/MovieInfoModalContent";
 export default {
   name: "MoviesList",
   components: {
+    MovieInfoModalContent,
     MovieItem,
   },
+  data: () => ({
+    movieInfoModalID : 'movie-info',
+    selectedMovieID: ''
+  }),
   props: {
     list : {
       type: Object,
@@ -38,6 +49,9 @@ export default {
     },
     listTitle(){
       return this.isSearch ? 'Результат поиска' : 'IMDB Top 250'
+    },
+    selectedMovie(){
+      return this.selectedMovieID ? this.list[this.selectedMovieID]: null
     }
   },
   methods: {
@@ -57,14 +71,29 @@ export default {
           title: 'Действие выполнено'
         })
       }
+    },
+    onShowMovieInfo(id){
+      console.log(id)
+      this.selectedMovieID = id
+      this.$bvModal.show(this.movieInfoModalID)
+    },
+    onCloseModal(){
+      try {
+        this.$bvModal.hide(this.movieInfoModalID)
+        this.selectedMovieID = null
+      }catch (error){
+        console.log(error);
+      }
     }
   }
 };
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
 .list-title
   font-size: 50px
   margin-bottom: 30px
   color: aliceblue
+.movie-modal-body
+  padding: 0 !important
 </style>

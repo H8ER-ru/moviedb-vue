@@ -8,7 +8,9 @@
       </div>
       <div class="movie-item-controls row no-gutters">
         <div class="col pr-2 pl-2">
-          <BButton size="md"  block variant="outline-light">Изменить</BButton>
+          <BButton size="md"  block variant="outline-light"
+              @click="showInfoModalEvent">Подробнее
+          </BButton>
         </div>
         <div class="col">
           <BButton size="md"  block variant="outline-light" @click="emitRemoveEvent">Удалить</BButton>
@@ -36,7 +38,13 @@ export default {
   },
   methods: {
     emitRemoveEvent(){
-      this.$emit('removeItem', {id: this.movie.imdbID, title: this.movie.Title})
+      this.$emit('removeItem', {
+        id: this.movie.imdbID,
+        title: this.movie.Title
+      })
+    },
+    showInfoModalEvent() {
+      this.$emit('showModal', this.movie.imdbID)
     }
   }
 };
